@@ -1,0 +1,73 @@
+;Skyysha Carroll
+;267 Final Project
+
+.model small ; id model of the program
+.stack 100h		; id size stack
+.386
+.data ;id where variables are stored
+	welcome db 'Welcome to the Heart Rate and Body Mass Index calculator!','$'
+	prompt db 'Enter your age: ','$'
+	weightprompt db 'Enter your weight (lbs): ','$'
+	heightprompt db 'Enter your height (in): ','$'
+	reply db 10,13,'Your maximum heart rate: ','$'
+	bodymassindex db 'Your body mass index is: ','$'
+	divider db 10,13,'-----------------------------',10,13,'$'
+	newline db 10,13,'$'
+	maxRate dw 220
+	age dw ? 
+	weight dd ?
+	height dd ?
+
+	
+.code ;id where code begins
+	extrn indec: proc
+	extrn outdec: proc
+	include myMacros.asm 
+
+main proc
+
+;set to define where data segment is located
+	mov eax,@data
+	mov ds,ax
+	
+	cls
+	
+	prtStr welcome
+	prtStr divider
+
+	prtStr prompt
+	call indec
+	mov age,ax ;
+	prtstr reply
+	mov ax,maxRate
+	mov bx,age
+	sub ax,bx
+	call outdec
+	
+	prtStr newline
+	prtStr newline 
+	
+	xor eax,eax ;initializing eax
+	prtStr weightPrompt ;weight prompt
+	call indec
+	mov weight,eax ;move weight into eax 
+	prtStr heightPrompt ;weight prompt
+	call indec
+	mov height,eax	;move height into eax
+	prtStr newline
+	prtStr bodymassindex
+	mov eax,weight ;move weight into eax for mul operation 
+	mov ebx,705 ;705 for american bmi
+	mul ebx ;eax=eax * 705
+	xor edx,edx ;initialize dx
+	mov ebx,height
+	div ebx ;eax = eax / ebx
+	xor edx,edx
+	mov ebx,height
+	div ebx ;eax = eax / ebx
+	call outdec
+
+	exit
+
+main endp
+end main
